@@ -29,6 +29,13 @@ Basic examples showing how to work with Finamon GPS 4G shield onboard devices us
 **Prerequisites**
 - for NMEA message parsing install package pynmea2:\
   `pip install pynmea2`
+
+  if you get "error: externally-managed-environment" then<br/>
+  try to use pip's argument `--break-system-packages`<br/>    		
+  or add following lines to ~/.config/pip/pip.conf:<br/>
+  `[global]`<br/>
+  `break-system-packages = true`
+
   
 - for acces to SIM card account information install python-dotenv:\
   `pip install python-dotenv`

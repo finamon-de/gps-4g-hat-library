@@ -14,8 +14,11 @@ import sys
 import time
 
 bRPi = False
-if "win" not in sys.platform: 
-    import RPi.GPIO as GPIO
+if "win" not in sys.platform:
+    # IMPORTANT: on raspberry 3/4:
+    # pip3 uninstall gpiod
+    # sudo apt install python3-libgpiod
+    import gpiod 
     bRPi = True
 
 # Peripheral Pin Definations
@@ -105,25 +108,36 @@ class BG77X:
 
         if not bRPi:
             return
+        if os.path.exists("/dev/gpiochip4"):
+            chip = gpiod.Chip("/dev/gpiochip4")
+            self.debug_print("found /dev/gpiochip4 - RPi type is 5\n")
+        elif os.path.exists("/dev/gpiochip0"):
+            chip = gpiod.Chip("/dev/gpiochip0")
+            self.debug_print("found /dev/gpiochip0 - RPi type is 3 or 4\n")
+        else:
+            self.debug_print("can't find dev/gpiodchipX\n")
             
+        self.STATUS_LINE = chip.get_line(STATUS)
+        self.STATUS_LINE.request(consumer="STATUS", type=gpiod.LINE_REQ_DIR_IN) #pull up
+        
+        self.RESET_LINE = chip.get_line(RESET)
+        self.RESET_LINE.request(consumer="RESET", type=gpiod.LINE_REQ_DIR_OUT)
+
+        self.PWRKEY_LINE = chip.get_line(PWRKEY)
+        self.PWRKEY_LINE.request(consumer="PWRKEY", type=gpiod.LINE_REQ_DIR_OUT)
+        
         self.open()
 
     def open(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
         
-        GPIO.setup(STATUS,GPIO.IN)
-        
-        GPIO.setup(RESET,GPIO.OUT)
-        GPIO.output(RESET,GPIO.HIGH)
+        self.RESET_LINE.set_value(1)
         delay(1000)
-        GPIO.output(RESET,GPIO.LOW)
+        self.RESET_LINE.set_value(0)
         delay(500)
 
-        GPIO.setup(PWRKEY,GPIO.OUT)
-        GPIO.output(PWRKEY,GPIO.HIGH)
+        self.PWRKEY_LINE.set_value(1)
         delay(1000)
-        GPIO.output(PWRKEY,GPIO.LOW)
+        self.PWRKEY_LINE.set_value(0)
         
         ser.open()
         self.waitUnsolicited("APP RDY", 20)
@@ -136,7 +150,7 @@ class BG77X:
     def isOn(self):
         if not bRPi:    #windows
             return True
-        if not GPIO.input(STATUS):
+        if not self.STATUS_LINE.get_value():
             return True
         return False
         
@@ -340,7 +354,7 @@ class BG77X:
     def ping(self, contextID, URL):
         self.compose = "AT+QPING=" + contextID + ",\"" + str(URL) + "\""
         if self.sendATcmd(self.compose):
-           self.getResponse(3)
+            self.getResponse(3)
         
     #----------------------------------------------------------------------------------------
     #    Connection Functions
