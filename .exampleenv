@@ -1,20 +1,25 @@
 # TCP/IP context settings
-CONTEXT_APN=emnify  # wsim, emnify
+# Use the variables below to configure your APN.
+CONTEXT_APN=  # wsim, emnify
 CONTEXT_USERNAME=""
 CONTEXT_PASSWORD=""
 
-# echo service settings
+# Echo service settings
 ECHO_SERVER_IP=52.215.34.155
-ECHO_SERVER_PORT= 7
+ECHO_SERVER_PORT=7
 
 # MQTT service settings
-MQTT_BROKER=23.88.108.59
-MQTT_PORT=1883
+MQTT_BROKER=   # IP address of your MQTT broker
+MQTT_PORT=1883 # MQTT default port
 
-MQTT_CLIENT_ID=866349041749536
-MQTT_USERNAME=api
-MQTT_PASSWORD=flake-iraq-contra
+MQTT_CLIENT_ID=  # your MQTT client id
+MQTT_USERNAME=   # your MQTT username
+MQTT_PASSWORD=   # your MQTT password
 
+# Note:
+# The topics below are just examples. Please make sure
+# that your MQTT service can handle them if you want 
+# to use them.
 MQTT_TOPIC_RECEIVE=receive/
 MQTT_TOPIC_GPS=gps/coordinates/
 MQTT_TOPIC_SENSORS=sensors/acceleration/
