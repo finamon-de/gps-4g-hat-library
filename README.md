@@ -28,6 +28,14 @@ Basic examples showing how to work with Finamon GPS 4G shield onboard devices us
 
 ### Prerequisites
 
+__Raspberry Pi Config__
+
+In your Raspberry Pi configuration within the _Interfaces_ section, please make sure that
+
+1. I2C is **enabled**
+2. Serial Port is **enabled**
+3. Serial Console is **disabled**
+
 __Global setup__
 
 If you prefer to setup your projects using global package installations, please take a look at the prerequisites below.
@@ -79,6 +87,10 @@ If you prefer to setup your projects using virtual environments, the necessary s
   
 - Start examples\
   `python examples/demo_xxxx.py`
+
+### Notes
+
+- By default the GPS 4G HAT is configured to use the **internal/onboard** GSM antenna and the **external** GNSS RF antenna (that is part of the deliverables). You can ensure this configuration by having a look at the resistors close to antenna connectors.
 
 
   
