@@ -55,7 +55,7 @@ If you prefer to setup your projects using virtual environments, the necessary s
     - Run `sudo apt update && sudo apt install python3-libgpiod`
 4. Now you can create the virtual environment `python3 -m venv .venv --system-site-packages`
     - The parameter `--system-site-packages` allows to access packages from outside of the virtual environment
-5. Activate the environment via `.venv/bin/activate`
+5. Activate the environment via `source .venv/bin/activate`
     - (use the command `deactivate` to leave the virtual environment)
 7. Install the dependencies to run the demo scripts `python3 -m pip install pynmea2 python-dotenv pyserial smbus`
 8. Now you can continue with the installation steps in the following sections to install the GPS 4G HAT library and execute the demo scripts
