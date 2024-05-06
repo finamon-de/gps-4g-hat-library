@@ -7,6 +7,7 @@ Python drivers for Finamon GPS 4G shield onboard devices and peripheral interfac
 - Quectel BG77/BG770 4G Modem
 - Accelerometer MC3419/MC3479
 - Other shield HW parts: inputs/outputs, button, LED
+
   
 ### Examples
 
@@ -14,17 +15,8 @@ Basic examples showing how to work with Finamon GPS 4G shield onboard devices us
 - demo_echo.py
 - demo_geofences.py
 - demo_GPS_4G_HAT.py
-- demo_mqtt.py 
+- demo_mqtt.py
 
-![CON_DATA_jpg](./res/GPS_4G_HAT_CON_DATA.jpg)
-
-![CON_IN_jpg](./res/GPS_4G_HAT_CON_IN.jpg)
-
-![CON_OUT_jpg](./res/GPS_4G_HAT_CON_OUT.jpg)
-
-![CON_ANT_jpg](./res/GPS_4G_HAT_ANT_INTERN.jpg)
-
-![CON_ANT_jpg](./res/GPS_4G_HAT_ANT_EXTERN.jpg)
 
 ### Prerequisites
 
@@ -68,6 +60,7 @@ If you prefer to setup your projects using virtual environments, the necessary s
 7. Install the dependencies to run the demo scripts `python3 -m pip install pynmea2 python-dotenv pyserial smbus`
 8. Now you can continue with the installation steps in the following sections to install the GPS 4G HAT library and execute the demo scripts
 
+
 ### Installation
 - Clone git repository https://github.com/finamon-de/gps-4g-hat-library
 
@@ -76,6 +69,7 @@ If you prefer to setup your projects using virtual environments, the necessary s
 
 - Install `gps4ghat` python package\
   `pip install gps4ghat-0.1.0-py3-none-any.whl`
+
 
 ### Getting started
 - Change directory to `gps-4g-hat-library` 
@@ -88,9 +82,26 @@ If you prefer to setup your projects using virtual environments, the necessary s
 - Start examples\
   `python examples/demo_xxxx.py`
 
+
 ### Notes
 
 - By default the GPS 4G HAT is configured to use the **internal/onboard** GSM antenna and the **external** GNSS RF antenna (that is part of the deliverables). You can ensure this configuration by having a look at the resistors close to antenna connectors.
+- When you use your SIM card for the first time or after a long period, you may experience that the examples return a message containing `+CEREG: 0,2`. This message indicates that it was not possible to establish a connection with the base station _but_ it is possible to retry - that's what the **2** indicates. When the connection is established the message will be `+CEREG: 0,5`, the **5** indicating that the connection is succesfully created. While testing different SIM cards, we expirienced (very) long timespans until **the first** connection to the base station was possible - up to 60 minutes sometimes. After the first successful connection reconnecting is not an issue.
 
 
-  
+### Images
+
+#### Data pins
+![CON_DATA_jpg](./res/GPS_4G_HAT_CON_DATA.jpg)
+
+#### Input pins
+![CON_IN_jpg](./res/GPS_4G_HAT_CON_IN.jpg)
+
+#### Output pins
+![CON_OUT_jpg](./res/GPS_4G_HAT_CON_OUT.jpg)
+
+#### Configuration to use the internal/onboard antennas
+![CON_ANT_jpg](./res/GPS_4G_HAT_ANT_INTERN.jpg)
+
+#### Configuration to use the external antenna connectors
+![CON_ANT_jpg](./res/GPS_4G_HAT_ANT_EXTERN.jpg)
