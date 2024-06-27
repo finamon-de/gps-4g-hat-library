@@ -4,6 +4,7 @@
 
 import sys
 import time
+sys.path.append('./')   # Adds higher directory to python modules path.
 
 import RPi.GPIO as GPIO
 

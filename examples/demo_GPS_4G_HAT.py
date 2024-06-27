@@ -6,6 +6,7 @@ import json
 import time
 import pynmea2
 import os, sys
+sys.path.append('./')   # Adds higher directory to python modules path.
 
 from gps4ghat.BG77X  import BG77X
 from gps4ghat.MC34X9 import MC34X9

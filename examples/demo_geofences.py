@@ -3,6 +3,7 @@
 '''
 import time
 import sys
+sys.path.append('./')   # Adds higher directory to python modules path.
 
 
 from gps4ghat.BG77X import BG77X
