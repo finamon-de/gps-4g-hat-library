@@ -368,3 +368,5 @@ FodyWeavers.xsd
 .eggs/
 build/
 *.egg-info/
+.venv
+gps4ghat/workspace.code-workspace
