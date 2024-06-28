@@ -34,10 +34,16 @@ class GEO_FENCE_SHAPE(Enum):
     QUADRANGLE      = 3     # 3 Quadrangle
 
 class GEO_FENCE_REPORT_MODE(Enum):
-    DISABLE        = 0     # 0 Disable URC to be reported when entering or leaving the geo-fence
-    ENTER          = 1     # 1 Enable URC to be reported when entering the geo-fence
-    LEAVE          = 2     # 2 Enable URC to be reported when leaving the geo-fence
-    ENTER_LEAVE    = 3     # 3 Enable URC to be reported when entering or leaving the geo-fence
+    DISABLE         = 0     # 0 Disable URC to be reported when entering or leaving the geo-fence
+    ENTER           = 1     # 1 Enable URC to be reported when entering the geo-fence
+    LEAVE           = 2     # 2 Enable URC to be reported when leaving the geo-fence
+    ENTER_LEAVE     = 3     # 3 Enable URC to be reported when entering or leaving the geo-fence
+
+
+class RAT(Enum):
+    eMTC            = 0     # 0 eMTC - CAT-M1 - E_UTRAN
+    NB_IoT          = 1     # 1 NB-IoT
+    eMTC_NB_IoT     = 2     # 2 eMTC and NB-IoT
 
 
 # global variables
@@ -91,7 +97,7 @@ class BG77X:
             ser.port = "COM4"
 
         envars = os.getcwd() + '/.env'
-        load_dotenv(envars)
+        load_dotenv(envars, override=True)
         
         if os.getenv('CONTEXT_APN'):
             self.debug_print("variables loaded from " + str(envars))
@@ -249,8 +255,8 @@ class BG77X:
 
     # Function for getting IMEI number
     def getIMEI(self):
-        self.sendATcmd("AT+QCCID","OK\r\n")
-        self.sendATcmd("AT+GSN","OK\r\n")
+        self.sendATcmd("AT+QCCID","OK\r\n")     # ICCID
+        self.sendATcmd("AT+GSN","OK\r\n")       # IMEI
         regex = re.compile(r'AT\+GSN\s+(\d+)')
         result = regex.match(self.response)
         if result:
@@ -306,18 +312,19 @@ class BG77X:
 
     # Function for setting common mobile network parameters
     def initNetwork(self, contextID, APN="", check_time_s = 60):
-        self.sendATcmd("AT+CBC")
-        self.sendATcmd("AT+CMEE=2")
-        self.sendATcmd("AT+CPIN?", "OK\r\n", 5)
-        self.sendATcmd("AT+CFUN=1")
-        self.sendATcmd("AT+CEREG=0")
+        self.sendATcmd("AT+CBC")                        # Battery Charge, Voltage
+        self.sendATcmd("AT+CMEE=2")                     # Error Message Format: 2 Enable result code and use verbose values
+        self.sendATcmd("AT+CPIN?", "OK\r\n", 5)         # Enter PIN
+        self.sendATcmd("AT+CFUN=1")                     # Set UE Functionality: 1 Full functionality
+        self.sendATcmd("AT+CEREG=0")                    # EPS Network Registration Status: 0 Disable network registration unsolicited result code
         self.configTcpIpContext(contextID, APN)
 
         interval = 10
         for n in range (int(check_time_s/interval)):
             if self.checkRegistration():
                 self.getSignalQuality()
-                self.sendATcmd("AT+QNWINFO", "OK\r\n", 10)
+                self.getNetworkInformation()
+                self.getNetworkOperator()
                 return True
             delay(interval*1000)
         return False
@@ -332,6 +339,28 @@ class BG77X:
             if result.group(1) == '1' or result.group(1) == '5':
                 return True
         return False
+
+    # Function for configure RATs, connecting technology
+    def configNetwork(self,  _RAT = RAT.eMTC_NB_IoT):
+        # This is settings for EUROPE!
+        self.sendATcmd("AT+QCFG=\"band\",F,80084,80084", "OK\r\n", 10)              # Set B3, B8 and B20 as the bands to be searched
+        self.sendATcmd("AT+QCFG=\"iotopmode\",%s" % _RAT.value, "OK\r\n", 10)       # 0 eMTC, 1 NB-IoT, 2 eMTC and NB-IoT
+        self.sendATcmd("AT+QCFG=\"nwscanseq\",0203", "OK\r\n", 10)                  # 00 Automatic (eMTC → NB-IoT → GSM), 01 GSM, 02 eMTC, 03 NB-IoT
+        # self.sendATcmd("AT+QCFG=\"nwscanmode\",3", "OK\r\n", 10)                  # 0 Automatic (GSM and LTE), 1 GSM only, 3 LTE only         <----- NOT AVAILABLE ON BG77
+        # After apply this settings, reboot the module to be safe
+        return _RAT
+    
+    # Function for scan available operators
+    def scanNetworkOperators(self):
+        self.sendATcmd("AT+COPS=?", "OK\r\n", 600)
+
+    # Function for getting registered network operator
+    def getNetworkOperator(self):
+        self.sendATcmd("AT+COPS?", "OK\r\n", 10)
+
+    # Function for query network information
+    def getNetworkInformation(self):
+        self.sendATcmd("AT+QNWINFO", "OK\r\n", 10)
 
     # Function for getting signal quality
     #+CSQ:<rssi>,<ber> 
@@ -682,11 +711,9 @@ if __name__=='__main__':
     module.getFirmwareInfo()
     module.getIMEI()
     #module.sendATcmd("AT+COPS=?", "OK", 600)
-    if module.initNetwork(contextID, os.environ.get("CONTEXT_APN"), 600): 
+    if module.initNetwork(contextID, os.environ.get("CONTEXT_APN"), 600):   # 600 = 10min
         module.activatePdpContext(contextID, 5)
         module.ping(contextID,"google.com")
         module.deactivatePdpContext(contextID, 5)
     module.close()
     delay(2000)
-    
-

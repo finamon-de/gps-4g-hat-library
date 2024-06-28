@@ -100,7 +100,30 @@ If you prefer to setup your projects using virtual environments, the necessary s
 
 - **Important** to have proper APN settings for SIM card which you using!
 - By default the GPS 4G HAT is configured to use the **internal/onboard** GSM antenna and the **external** GNSS RF antenna (that is part of the deliverables). You can ensure this configuration by having a look at the resistors close to antenna connectors.
-- When you use your SIM card for the first time or after a long period, you may experience that the examples return a message containing `+CEREG: 0,2`. This message indicates that it was not possible to establish a connection with the base station _but_ it is possible to retry - that's what the **2** indicates. When the connection is established the message will be `+CEREG: 0,5`, the **5** indicating that the connection is succesfully created. While testing different SIM cards, we expirienced (very) long timespans until **the first** connection to the base station was possible - up to 60 minutes sometimes. After the first successful connection reconnecting is not an issue.
+- When you use your SIM card for the first time or after a long period, you may experience that the examples return a message containing `+CEREG: 0,2`. This message indicates that it not registered on network _but_ it is searching for new operator to register to - that's what the **2** indicates. When registered on network the message will be `+CEREG: 0,5`, the **5** indicating that the registered (roaming) on network. While testing different SIM cards, we expirienced (very) long timespans until **the first** registration to the network is possible - After the first successful registration, next registrations are not an issue because SIM card storing information about network.
+If you experience similar issue, please follow "First registration on network" procedure.
+
+
+### First registration on network
+It is related to the SIM card because SIM card store network information. When it's a brand new, there is no information about network.\
+Default settings on BG77 module will do very wide scanning for networks, and it will took very long time until success registration on network.\
+After first registration on network and gracefully power down the BG77 module, all network information will be stored on SIM card. It means next registration should be normally fast.
+But network searching can be speed up by disabling NB-IoT and enabling only the required RAT(s), or when NB-IoT is necessary, it is recommended to enable only the bands supported by the current service
+operator.\
+By default in script `examples/first_registration.py`, configured RAT is CAT-M1 (eMTC). Feel free to change RAT as your needs.\
+In the script you can find explanation for step 1 and 2. Step 1 will try automatic registration. If it fails you can try step 2 for manual registration for configured network operator. Please also check CONTEXT_APN settings in .env file.
+- Script run:\
+    `python examples/first_registration.py`
+
+
+### UART console for AT commands
+If you want direct access to the UART (serial port), you can get it with `screen /dev/serial0 115200`.
+- Run this command only for first time, to set permissions on file `console.sh`\
+    `sudo chmod +x console.sh`\
+
+- Use this command to open UART console to the module\
+    `./console.sh`
+
 
 
 ### Images
