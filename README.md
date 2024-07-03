@@ -68,17 +68,15 @@ __Virtual Enivironment__
 
 If you prefer to setup your projects using virtual environments, the necessary steps to be able to run the examples are:
 
-1. Download or clone the repository (see section below)
-2. Open the termianl and change into the repository folder
-3. Even using the virtual environment the project needs access to a global package to work with GPIOs.\
+1. Even using the virtual environment the project needs access to a global package to work with GPIOs.\
 `python3-libgpiod` should already be installed in Installation step.
-4. Now you can create the virtual environment 
+2. Now you can create the virtual environment 
     - Run `python3 -m venv .venv --system-site-packages`
     - The parameter `--system-site-packages` allows to access packages from outside of the virtual environment
-5. Activate the environment 
+3. Activate the environment 
     - Run `source .venv/bin/activate`
     - (use the command `deactivate` to leave the virtual environment)
-7. Install the dependencies to run the demo scripts 
+4. Install the dependencies to run the demo scripts 
     - Run `python3 -m pip install pynmea2 python-dotenv pyserial smbus`
 
 
@@ -132,6 +130,11 @@ If you want only to power up or power down the module and let in that state.
 
 - Command for power down\
     `python examples/power_down.py`
+
+
+### INTERNET Access
+This HAT can provide you a internet access from the host operating system.
+Please check the [INTERNET.md](INTERNET.md)
 
 
 
