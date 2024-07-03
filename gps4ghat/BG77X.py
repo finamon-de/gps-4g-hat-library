@@ -136,6 +136,12 @@ class BG77X:
 
     def open(self):
         
+        try:
+            ser.open()
+        except Exception as e:
+            self.debug_print(str(e))
+            raise e
+                
         self.RESET_LINE.set_value(1)
         delay(1000)
         self.RESET_LINE.set_value(0)
@@ -145,9 +151,7 @@ class BG77X:
         delay(1000)
         self.PWRKEY_LINE.set_value(0)
         
-        ser.open()
         self.waitUnsolicited("APP RDY", 20)
-        #delay(3000)
         
     def close(self):
         self.sendATcmd("AT+QPOWD=1", "POWERED DOWN", 60)

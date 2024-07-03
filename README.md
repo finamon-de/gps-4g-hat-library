@@ -119,10 +119,19 @@ In the script you can find explanation for step 1 and 2. Step 1 will try automat
 ### UART console for AT commands
 If you want direct access to the UART (serial port), you can get it with `screen /dev/serial0 115200`.
 - Run this command only for first time, to set permissions on file `console.sh`\
-    `sudo chmod +x console.sh`\
+    `sudo chmod +x console.sh`
 
 - Use this command to open UART console to the module\
     `./console.sh`
+
+
+### Module power UP & DOWN
+If you want only to power up or power down the module and let in that state.
+- Command for power up\
+    `python examples/power_up.py`
+
+- Command for power down\
+    `python examples/power_down.py`
 
 
 
