@@ -2,18 +2,18 @@
 
 ### About
 
-**INTERNET** - Get the internet access over GPS 4G HAT.
+**INTERNET** - Get internet access over GPS 4G HAT.
 
-We will show you how to get the internet connection from the Raspberry Pi OS, but with low speed.
-It is done over ppp connection (Point-to-Point Protocol) and limited by serial port baudrate 115200.\
-Setup will be splited in two parts:
-- Setup a PPP and get internet access
-- Setup a Wireless Hotspot and share internet access
+In the following sections we will show you how to establish an internet connection from the Raspberry Pi OS using the GPS 4G HAT, but with low speed.
+It is realized over a ppp connection (Point-to-Point Protocol) and limited by serial port baudrate 115200.\
+The setup is split in two parts:
+1. Setup a PPP and get internet access
+2. Setup a Wireless Hotspot and share internet access
 
 ### Notes
 
-- **Important** to have proper APN settings for SIM card which you using! It is located in `rnet` file.
-- Assume that you already done 'Installation' and 'Getting started' from [README.md](README.md)
+- **Important**: Please make sure to have the proper APN settings for your SIM card at hand! It is located in `rnet` file.
+- We assume that you already finshed the steps `Installation` and `Getting started` from [README.md](README.md).
 
 
 ### Setup a PPP connection
@@ -66,13 +66,13 @@ Setup will be splited in two parts:
 - Start the PPP connection.\
   `sudo pon rnet`
 
-- Check for the interface, ppp0 interface should exist.\
+- Check for the interface, `ppp0` interface should exist.\
   `ifconfig`
 
 - Test the interface with ping.\
   `ping -I ppp0 8.8.8.8`
   
-- If you want to have default route over ppp0, fastest way is to disable all interfaces (disconnect WiFi and LAN cable).\
+- If you want to have default route over `ppp0`, fastest way is to disable all interfaces (disconnect WiFi and LAN cable).\
   Then first start the PPP connection.
 
 - Stop the PPP connection.\
@@ -87,16 +87,16 @@ Setup will be splited in two parts:
 
 It is based on **Debian GNU/Linux 12 (bookworm)**, as it has already installed Hotspot support.\
 (*Linux 6.6.20+rpt-rpi-v8 #1 SMP PREEMPT Debian 1:6.6.20-1+rpt1 (2024-03-07)*)\
-Steps will drive you on the Desktop version.
+The steps below describe how to do it using the Desktop version.
 
-- If you settings WiFi for the first time:\
-  Click on the network icon (top right), then "Click here to set Wi-Fi contry".\
-  Please select country and click OK.
+- If you setup WiFi for the first time:\
+  Click on the network icon (top right), then "Click here to set Wi-Fi country".\
+  Please select your country and click OK.
   
-- Need to reboot to accept country settings.\
+- Now you need to reboot to accept the country settings.\
   `sudo reboot now` or with mouse.
   
-- Because of reboot, need to power up module and start PPP connection.\
+- Because of the reboot, you need to power up the module and start PPP connection.\
   `python examples/power_up.py`\
   `sudo pon rnet`
 
