@@ -30,6 +30,22 @@ In your Raspberry Pi configuration within the _Interfaces_ section, please make 
 2. Serial Port is **enabled**
 3. Serial Console is **disabled**
 
+__Only Raspberry Pi 5:__ There are 2 UART ports. By default `/dev/serial0` is mapped to the UART connector (`/dev/ttyAMA10`) on the board. But this HAT using UART on GPIO pins 14 & 15 (`/dev/ttyAMA0`). You can solve it with one of two options:
+
+1. Pass the serial port name to the constructor of the library as `module = BG77X(serial_port = '/dev/ttyAMA0')`.\
+  *If you will try [Internet access](INTERNET.md), you also need to change a serial port name in rnet file.*
+
+2. Recommended: Add dtoverlay line in config.txt to map `/dev/serial0` to UART on GPIO pins 14 & 15:
+  - Open config.txt file.\
+  `sudo nano /boot/firmware/config.txt`
+
+  - Add this line to the end of file.\
+  `dtparam=uart0_console`
+
+  - Save the file and reboot.\
+  `sudo reboot now`
+
+
 
 ### Installation
 - Clone git repository\
