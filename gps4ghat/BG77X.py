@@ -501,6 +501,51 @@ class BG77X:
         return ret
 
     #----------------------------------------------------------------------------------------
+    #    HTTP(S) Protocol Functions
+    #----------------------------------------------------------------------------------------
+    
+    # Function for send GET request via http(s).
+    def sendHttpGetRequest(self, url_address, url_timeout = 80):
+        self.compose = "AT+QHTTPURL=%s,%s" % (len(url_address), url_timeout)                # Set the URL of the HTTP server that will be accessed.
+        if self.sendATcmd(self.compose, "CONNECT"):
+            self.sendATcmd(url_address)                                                     # Send the URL address
+            self.sendATcmd("AT+QHTTPGET=%s" % url_timeout)                                  # Send the HTTP GET request with the maximum response time
+            if self.waitUnsolicited("+QHTTPGET:", 5):
+                self.sendATcmd("AT+QHTTPREAD=%s" % url_timeout, "OK\r\n", url_timeout)      # Read the HTTP response information and output it via a UART. The maximum time to wait for an HTTP session to be closed.
+                if self.response.find("+QHTTPREAD:"):                                       # Check for the complete response
+                    start = self.response.find("CONNECT\r\n") + len("CONNECT\r\n")          # Find the substring (real response from the HTTP server)
+                    stop = self.response.find("\r\nOK\r\n")
+                    return self.response[start:stop]
+                else:
+                    self.debug_print("ERROR reading reponse!")
+            else:
+                self.debug_print("ERROR no response!")
+        else:
+            self.debug_print("ERROR creating HTTP server for the URL: %s" % url_address)
+        return False
+    
+    # Function for send POST request via http(s).
+    def sendHttpPostRequest(self, data, url_address, url_timeout = 80):
+        self.compose = "AT+QHTTPURL=%s,%s" % (len(url_address), url_timeout)                                                # Set the URL of the HTTP server that will be accessed.
+        if self.sendATcmd(self.compose, "CONNECT"):
+            self.sendATcmd(url_address)                                                                                     # Input the URL address
+            if self.sendATcmd("AT+QHTTPPOST=%s,%s,%s" % (len(data), url_timeout, url_timeout), "CONNECT", url_timeout):     # Send an HTTP POST request. The maximum input time and the maximum response time are 80 s each.
+                self.sendATcmd(data)                                                                                        # Input the POST body
+                if self.waitUnsolicited("+QHTTPPOST:", 5):
+                    self.sendATcmd("AT+QHTTPREAD=%s" % url_timeout, "OK\r\n", url_timeout)                                  # Read the HTTP response information and output it via a UART. The maximum time to wait for an HTTP session to be closed.
+                    if self.response.find("+QHTTPREAD:"):                                                                   # Check for the complete response
+                        start = self.response.find("CONNECT\r\n") + len("CONNECT\r\n")                                      # Find the substring (real response from the HTTP server)
+                        stop = self.response.find("\r\nOK\r\n")
+                        return self.response[start:stop]
+                    else:
+                        self.debug_print("ERROR reading reponse!")
+                else:
+                    self.debug_print("ERROR no response!")
+        else:
+            self.debug_print("ERROR creating HTTP server for the URL: %s" % url_address)
+        return False
+
+    #----------------------------------------------------------------------------------------
     #    GNSS Functions
     #----------------------------------------------------------------------------------------
 

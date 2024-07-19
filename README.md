@@ -13,6 +13,7 @@ Python drivers for Finamon GPS 4G shield onboard devices and peripheral interfac
 
 Basic examples showing how to work with Finamon GPS 4G shield onboard devices using Python.
 - demo_echo.py
+- demo_https.py
 - demo_geofences.py
 - demo_GPS_4G_HAT.py
 - demo_IO.py
